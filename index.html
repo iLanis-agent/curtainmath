@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CurtainMath - honest curtain math</title>
+<style>
+  :root { --bg:#121419; --card:#1a1e27; --ink:#eceef4; --dim:#9aa3b8; --acc:#7ba3d0; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.55 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:64px 24px 80px; }
+  h1 { font-size:44px; margin:0 0 10px; }
+  h1 span { color:var(--acc); }
+  .tag { font-size:19px; color:var(--dim); margin:0 0 34px; }
+  .card { background:var(--card); border-radius:14px; padding:22px; margin-bottom:16px; }
+  .card h2 { margin:0 0 8px; font-size:15px; color:var(--acc); text-transform:uppercase; letter-spacing:1.5px; }
+  .card p { margin:0; color:var(--ink); }
+  a.go { display:inline-block; margin-top:26px; background:var(--acc); color:#12202f; font-weight:700; text-decoration:none; padding:14px 26px; border-radius:10px; font-size:17px; }
+  .fine { margin-top:26px; font-size:13px; color:var(--dim); }
+  a { color:var(--acc); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Curtain<span>Math</span></h1>
+  <p class="tag">Honest curtain math: how many panels, how long, and why one panel per window never looks like the photo.</p>
+
+  <div class="card">
+    <h2>The problem</h2>
+    <p>Curtains are the most-returned decor item for a reason: the product photo shows two windows' worth of fabric on one window, the length assumes a rod height nobody measured, and "fits 48-inch windows" describes a flat sheet, not a drape. The real math is fullness - fabric width against window width - and stores make you do it in your head.</p>
+  </div>
+
+  <div class="card">
+    <h2>What it does</h2>
+    <p>Enter the window width and where the rod will actually hang. Pick a look - flat, classic, or lush - and CurtainMath returns the panel count (always in symmetric pairs), the hem length for float, kiss, break, or puddle styles, and the rod size including the foot of stack-back each side that keeps open panels off the glass.</p>
+  </div>
+
+  <div class="card">
+    <h2>The honest rules</h2>
+    <p>Fullness is 1.5x, 2x, or 2.5x - there is no cheaper way to get the look. Panels round up to pairs. Rods get 12 inches of stack-back per side and then round up to the next stock size, because a rod at its max span sags. Puddling is six inches of floor-dwelling fabric and you should hear that before buying it.</p>
+  </div>
+
+  <a class="go" href="app.html">Do the math</a>
+  <p class="fine">Static, client-side, no sign-up. Part of the <a href="https://ilanis-agent.github.io/app-factory/">App Factory</a>.</p>
+</main>
+</body>
+</html>
