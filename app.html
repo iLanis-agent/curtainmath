@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CurtainMath - honest curtain math</title>
+<style>
+  :root { --bg:#121419; --card:#1a1e27; --ink:#eceef4; --dim:#9aa3b8; --acc:#7ba3d0; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { padding:28px 24px 8px; max-width:980px; margin:0 auto; display:flex; justify-content:space-between; align-items:baseline; }
+  h1 { margin:0; font-size:28px; }
+  h1 span { color:var(--acc); }
+  nav a { color:var(--dim); text-decoration:none; font-size:14px; }
+  main { max-width:980px; margin:0 auto; padding:16px 24px 60px; display:grid; gap:18px; }
+  .card { background:var(--card); border-radius:14px; padding:20px; }
+  .card h2 { margin:0 0 12px; font-size:13px; letter-spacing:1.5px; color:var(--dim); text-transform:uppercase; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+  label { display:block; font-size:13px; color:var(--dim); margin-bottom:4px; }
+  input, select { width:100%; background:#151923; border:1px solid #3a4356; color:var(--ink); border-radius:8px; padding:9px 10px; font-size:15px; }
+  .hint { font-size:12.5px; color:var(--dim); margin-top:10px; }
+  button { cursor:pointer; border:0; border-radius:9px; padding:11px 16px; font-size:15px; background:var(--acc); color:#12202f; font-weight:600; }
+  button.ghost { background:#2d3547; color:var(--ink); font-weight:500; }
+  .row { display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+  .verdict { font-size:17px; line-height:1.65; }
+  .verdict b { color:var(--acc); }
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:16px; }
+  .stat { background:#151923; border-radius:10px; padding:12px; }
+  .stat .v { font-size:19px; font-weight:700; color:var(--acc); }
+  .stat .k { font-size:12px; color:var(--dim); margin-top:2px; }
+  .warn { background:#232c3d; border:1px solid #415a7d; border-radius:10px; padding:12px 14px; margin-top:14px; font-size:14px; color:#cfdef2; }
+  table.bd { width:100%; border-collapse:collapse; margin-top:6px; font-size:14.5px; }
+  table.bd td { padding:7px 4px; border-bottom:1px solid #2a3140; }
+  table.bd td:last-child { text-align:right; color:var(--acc); font-weight:600; }
+  .fine { font-size:12.5px; color:var(--dim); margin-top:8px; }
+  a { color:var(--acc); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Curtain<span>Math</span></h1>
+  <nav><a href="index.html">about</a></nav>
+</header>
+<main>
+  <section class="card">
+    <h2>The window</h2>
+    <div class="grid">
+      <div>
+        <label for="width">Window width (in)</label>
+        <input id="width" type="number" min="12" max="240" step="1" value="60">
+      </div>
+      <div>
+        <label for="rodfloor">Rod to floor (in)</label>
+        <input id="rodfloor" type="number" min="24" max="180" step="0.5" value="84">
+      </div>
+    </div>
+    <p class="hint">Measure the glass frame width, not the existing curtain. "Rod to floor" is from where the rod WILL hang - ideally 4-6 in above the frame, not from the frame itself. High rods make short rooms look taller.</p>
+  </section>
+
+  <section class="card">
+    <h2>The look</h2>
+    <div class="grid">
+      <div>
+        <label for="fullness">Fullness</label>
+        <select id="fullness">
+          <option value="flat">Flat (1.5x - modern, minimal)</option>
+          <option value="classic" selected>Classic (2x - the usual right answer)</option>
+          <option value="lush">Lush (2.5x - hotel drape)</option>
+        </select>
+      </div>
+      <div>
+        <label for="panelwidth">Panel width (in)</label>
+        <select id="panelwidth">
+          <option value="50" selected>50 (standard panel)</option>
+          <option value="100">100 (extra-wide panel)</option>
+        </select>
+      </div>
+      <div>
+        <label for="lengthstyle">Hem style</label>
+        <select id="lengthstyle">
+          <option value="float">Float (1/2 in off the floor)</option>
+          <option value="kiss" selected>Kiss (just touches)</option>
+          <option value="breakin">Break (+1 in, slight bend)</option>
+          <option value="puddle">Puddle (+6 in, dramatic)</option>
+        </select>
+      </div>
+      <div>
+        <label for="price">$ per panel</label>
+        <input id="price" type="number" min="0" max="500" step="1" value="35">
+      </div>
+    </div>
+    <div class="row">
+      <button id="go">Do the math</button>
+      <button class="ghost" data-preset="bedroom">Bedroom window</button>
+      <button class="ghost" data-preset="living">Living room</button>
+      <button class="ghost" data-preset="slider">Sliding door</button>
+    </div>
+    <p class="hint">Fullness is fabric width divided by window width. A "2x" look needs 2x the fabric - one 50 in panel on a 48 in window is not a curtain, it is a flat sheet with hardware.</p>
+  </section>
+
+  <section class="card" id="out" hidden>
+    <h2>Your order</h2>
+    <div class="verdict" id="verdict"></div>
+    <div class="stats" id="stats"></div>
+    <div id="warnbox"></div>
+    <table class="bd" id="breakdown"></table>
+    <p class="fine">Panels are sold individually but hung in pairs - this app always rounds to a symmetrical pair count. Rings, clips, tiebacks and the rod itself are separate. Wash or steam before judging the length: fabric shrinks and hangs truer after the first cleaning.</p>
+  </section>
+
+  <section class="card">
+    <h2>What the product photo will not show you</h2>
+    <table class="bd">
+      <tr><td>The photo is two windows of fabric on one window</td><td>every styled product shot uses more panels than the listing suggests - that drape is the fullness, not the fabric</td></tr>
+      <tr><td>"Fits up to 48 in" fits nothing</td><td>a rod at its exact max span sags in the middle within a year; buy the next size up and cut the slack at the finials</td></tr>
+      <tr><td>Stack-back steals light</td><td>open panels eat 15-25% of the window unless the rod extends about a foot past the frame on each side</td></tr>
+      <tr><td>Grommets need extra rod</td><td>grommet panels ride an inch above the rod; account for it or your kiss-length curtain floats</td></tr>
+      <tr><td>Blackout is a lining, not a color</td><td>dark fabric is not blackout fabric - check for a foam or woven lining if sleep is the goal</td></tr>
+      <tr><td>Puddles collect everything</td><td>a puddled hem is a dust mop with good PR; with pets or robot vacuums, float it</td></tr>
+    </table>
+  </section>
+</main>
+<script src="engine.js"></script>
+<script>
+(function () {
+  function val(id) { return document.getElementById(id).value; }
+  function num(id) { return parseFloat(val(id)) || 0; }
+  function money(x) { return '$' + x.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function fmt(x) { return x.toLocaleString('en-US', { maximumFractionDigits: 1 }); }
+
+  function render() {
+    var p = CurtainMath.plan({
+      windowWidthIn: num('width'), fullness: val('fullness'),
+      panelWidthIn: num('panelwidth'), rodToFloorIn: num('rodfloor'),
+      lengthStyle: val('lengthstyle'), pricePerPanel: num('price')
+    });
+    if (!(p.coverageIn > 0)) { document.getElementById('out').hidden = true; return; }
+
+    var rodBit = p.rodSize
+      ? 'a rod rated for <b>' + p.rodSize + ' in</b> (need ' + fmt(p.rodMinIn) + ' incl. stack-back)'
+      : 'a custom rod - ' + fmt(p.rodMinIn) + ' in with stack-back is past stock sizes';
+    document.getElementById('verdict').innerHTML =
+      'Order <b>' + p.panels + ' panels</b> (' + p.panelsPerSide + ' per side), <b>' + fmt(p.lengthIn) +
+      ' in</b> long, on ' + rodBit + '. Material total <b>' + money(p.totalCost) + '</b>.';
+
+    var stats = [
+      ['Panels to order', p.panels],
+      ['Per side', p.panelsPerSide],
+      ['Curtain length', fmt(p.lengthIn) + ' in'],
+      ['Achieved fullness', fmt(p.achievedFullness) + 'x'],
+      ['Rod (with stack-back)', fmt(p.rodMinIn) + ' in'],
+      ['Material total', money(p.totalCost)]
+    ];
+    document.getElementById('stats').innerHTML = stats.map(function (s) {
+      return '<div class="stat"><div class="v">' + s[1] + '</div><div class="k">' + s[0] + '</div></div>';
+    }).join('');
+
+    var warns = [];
+    if (p.achievedFullness > p.fullness * 1.4)
+      warns.push('Panel rounding takes you to <b>' + fmt(p.achievedFullness) + 'x</b> fullness - more drape than you asked for. That is how pairs work; the extra fabric is what makes the folds read as intentional.');
+    if (!p.rodSize)
+      warns.push('This span needs a custom or center-supported rod. Two stock rods sharing a center bracket is the usual workaround - hide the join behind the center bracket.');
+    if (val('lengthstyle') === 'puddle')
+      warns.push('Puddling is +6 in of fabric living on the floor. It photographs beautifully and collects dust, pet hair, and robot vacuums with equal enthusiasm.');
+    document.getElementById('warnbox').innerHTML = warns.map(function (w) {
+      return '<div class="warn">' + w + '</div>';
+    }).join('');
+
+    var rows = [['Panels (' + p.panels + ' x ' + fmt(num('panelwidth')) + ' in)', money(p.totalCost)],
+                ['Fabric coverage', fmt(p.panels * num('panelwidth')) + ' in for a ' + fmt(num('width')) + ' in window'],
+                ['Material total', money(p.totalCost)]];
+    document.getElementById('breakdown').innerHTML = rows.map(function (r) {
+      return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';
+    }).join('');
+    document.getElementById('out').hidden = false;
+  }
+
+  var presets = {
+    bedroom: { width: 48, rodfloor: 84, fullness: 'classic', panelwidth: 50, lengthstyle: 'kiss', price: 30 },
+    living: { width: 72, rodfloor: 90, fullness: 'lush', panelwidth: 50, lengthstyle: 'breakin', price: 42 },
+    slider: { width: 96, rodfloor: 84, fullness: 'classic', panelwidth: 100, lengthstyle: 'float', price: 55 }
+  };
+  function loadPreset(key) {
+    var pr = presets[key];
+    ['width', 'rodfloor', 'fullness', 'panelwidth', 'lengthstyle', 'price'].forEach(function (id) {
+      document.getElementById(id).value = pr[id];
+    });
+    render();
+  }
+
+  document.getElementById('go').addEventListener('click', render);
+  document.querySelectorAll('[data-preset]').forEach(function (b) {
+    b.addEventListener('click', function () { loadPreset(b.getAttribute('data-preset')); });
+  });
+  ['width', 'rodfloor', 'fullness', 'panelwidth', 'lengthstyle', 'price'].forEach(function (id) {
+    document.getElementById(id).addEventListener('input', render);
+  });
+
+  loadPreset('living');
+})();
+</script>
+</body>
+</html>
